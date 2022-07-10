@@ -1,12 +1,12 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='brodcast-fuzzer',
+    name='broadcast-fuzzer',
     version='1.0.0.1',
     python_requires='>3.6',
     description='Tool to fuzz android broadcast receivers',
     author='s4suryan',
-    #author_email="",
+    author_email="s4suryan@uwaterloo.ca",
     packages=find_packages('SOURCES'),
     package_dir={'':'SOURCES'},
     include_package_data=True,
@@ -17,6 +17,6 @@ setup(
         'pyyaml'
     ],
     entry_points={
-        'console_scripts':['brodcast-fuzzery=brodcast-fuzzer:cli']
+        'console_scripts':['broadcast-fuzzer=broadcast-fuzzer:cli']
     }
 )
