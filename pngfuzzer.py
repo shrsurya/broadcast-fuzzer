@@ -1,7 +1,8 @@
 import binascii
 import sys
-import os
+import os, os.path
 import random
+import glob
 
 
 def random_multihex(png_hex, lo_index, hi_index):
@@ -23,9 +24,44 @@ def random_onehex():
     return str(random.choice("0123456789abcdef"))
 
 
+def random_num(num):
+    return random.randint(0, num)
+
+
+def fuzz(runtime, fuzzed_filename):
+    # count how many files in SEED folder
+    seed_arr = glob.glob("Seed/*.png")
+    seed_arr_size = len(seed_arr)
+    # randomly pick a seed png file
+    seed_file_path = seed_arr[random_num(seed_arr_size - 1)]
+    # get hex value of seed png file
+    with open(seed_file_path, 'rb') as f:
+        content = f.read()
+    seed_hex = str(binascii.hexlify(content))
+    seed_hex = seed_hex[2:len(seed_hex)-1]
+    print(seed_hex)
+
+    # fuzz it
+    chunks = 10 # need to figure out how many chunks
+    chunk_num = random_num(chunks)
+    chunk_length = 8 # need to figure out how many bytes this chunk has
+    chunk_start = 0
+    chunk_end = 0
+    # random_multihex(seed_hex, chunk_start, chunk_end)
+
+    # make fuzzed data be a new png file
+    barr = bytearray.fromhex(seed_hex)
+    fuzzed_data = barr.decode(encoding="ascii", errors="ignore")
+    fuzzed_savepath = "./FuzzedData/fuzzedpng/" + fuzzed_filename
+    file = open(fuzzed_savepath, "w")
+    file.write(fuzzed_data)
+    file.close()
+    pass
+
+
 def main():
-    seedfilename = sys.argv[1]
-    print(seedfilename)
+    runtime = int(sys.argv[1])
+    fuzz(runtime, "test1.png")
 
 
 if __name__ == '__main__':
