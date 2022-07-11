@@ -1,22 +1,12 @@
 import sys
 import click
-from .broadcast_fuzzer import broadcastFuzzer
+from .broadcast_fuzzer import BroadcastFuzzer
 
 @click.command()
 @click.version_option()
-# @click.option('--dry', '-d',
-#               default=False,
-#               is_flag=True,
-#               help="Don't make changes, just print expected actions")
-@click.option('--mainfest', '-m',
-              default=False,
-              is_flag=True,
+@click.option('--manifest', '-m',
               required=True,
-              type=click.File('r+'),
+              type=click.File('rb'),
               help="The path to manifest file, to be used")
-# @click.option('--fuzz', '-f',
-#               default=False,
-#               is_flag=True,
-#               help="Fuzz")
 def cli(**kwargs):
-    broadcastFuzzer(**kwargs)
+    BroadcastFuzzer(**kwargs)
