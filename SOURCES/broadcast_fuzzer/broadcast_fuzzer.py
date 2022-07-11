@@ -17,7 +17,6 @@ class broadcastFuzzer(object):
             logger.error("Manifest file missing")
 
     
-
     def extract_apk(self, apk_path, extract_folder):
         """
         TODO: Not a priority as of now
