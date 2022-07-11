@@ -11,8 +11,18 @@ class BroadcastFuzzer(object):
 
     def __init__(self, **kwargs) -> None:
         """Configure self and execute"""
-        manifest_file = kwargs['manifest']
-        self.manifest_data = ManifestData(manifest_file)
+        self.dry = kwargs["dry"]
+        self.print_flag = kwargs["print"]
+        if 'manifest' in kwargs:
+            manifest_file = kwargs['manifest']
+            self.manifest_data = ManifestData(manifest_file)
+        else:
+            logger.error('manifest file missing')
+    
+        if self.print_flag:
+            self.print_manifest()
+
+    def print_manifest(self):
         print(self.manifest_data)
 
     def extract_apk(self, apk_path, extract_folder):
@@ -119,6 +129,6 @@ class IntentFilter(object):
     def __repr__(self) -> str:
         return self.sar_type +": "+ self.sar_name + "\naction_name: "+ self.action_name+ "\ndata_mimetype: "+ self.data_mimetype
     
-if __name__ == "__main__":
-    broadcastFuzzer1 =  BroadcastFuzzer(**{"manifest":"../../xmls/telegram_manifest.xml"})
+# if __name__ == "__main__":
+#     broadcastFuzzer1 =  BroadcastFuzzer(**{"manifest":"../../xmls/telegram_manifest.xml"})
     #print(broadcastFuzzer1.manifest_data)
