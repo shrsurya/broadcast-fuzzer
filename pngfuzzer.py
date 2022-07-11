@@ -1,8 +1,21 @@
 import binascii
 import sys
-import os, os.path
 import random
 import glob
+# from . import constant
+
+"""
+0 stands for header size (index 16 - 23, usually last two digits)
+1 stands for pixel wide ()
+2 stands for pixel high
+3 stands for how many bits for pixel
+4 stands for color type
+5 stands for compression method ()
+6 stands for filter method 
+7 stands for IDAT content size
+8 stands for data chunk 
+"""
+CHUNK_INDEX = [[16, 23], [32, 39], [40, 47], [48, 49], [50, 51], [52, 53], [54, 55], [66, 73]]
 
 
 def random_multihex(png_hex, lo_index, hi_index):
@@ -30,29 +43,27 @@ def random_num(num):
     return random.randint(0, num)
 
 
-def fuzz_one(fuzzed_filename):
+def fuzz_one(fuzzed_filename, fuzz_index_arr):
     # count how many files in SEED folder
     seed_arr = glob.glob("Seed/*.png")
     seed_arr_size = len(seed_arr)
-    # randomly pick a seed png file
+    # randomly pick a seed png file and get hex value of it
     seed_file_path = seed_arr[random_num(seed_arr_size - 1)]
-    # get hex value of seed png file
     with open(seed_file_path, 'rb') as f:
         content = f.read()
-    # seed_hex is a string
+    # convert the hex string to good format
     seed_hex = str(binascii.hexlify(content))
     seed_hex = seed_hex[2:len(seed_hex)-1]
     print(seed_hex)
     print("  ")
 
     # fuzz it
-    chunks = 10 # need to figure out how many chunks
-    chunk_num = random_num(chunks)
-    chunk_length = 8 # need to figure out how many bytes this chunk has
-    chunk_start = 22
-    chunk_end = 24
-    seed_hex = random_multihex(seed_hex, chunk_start, chunk_end)
-    print(seed_hex)
+    for i in range(len(fuzz_index_arr)):
+        chunk_start = fuzz_index_arr[i][0]
+        chunk_end = fuzz_index_arr[i][1]
+        seed_hex = random_multihex(seed_hex, chunk_start, chunk_end)
+        print(seed_hex)
+
     # barr = bytearray.fromhex(seed_hex)
     # fuzzed_data = barr.decode(encoding="ascii", errors="ignore")
 
@@ -65,16 +76,23 @@ def fuzz_one(fuzzed_filename):
     pass
 
 
-def fuzz(run_time):
+def fuzz(run_time, chunk_index_arr):
     for i in range(0, run_time):
+        total_random_chunks = random_num(len(chunk_index_arr) - 1)
+        fuzz_index_arr = []
+        for j in range(total_random_chunks):
+            random_temp = random_num(len(chunk_index_arr) - 1)
+            fuzz_index_arr.append(chunk_index_arr[random_temp])
         file_name = str(i) + ".png"
-        fuzz_one(file_name)
+        fuzz_one(file_name, fuzz_index_arr)
     return
 
 
 def main():
     runtime = int(sys.argv[1])
-    fuzz(runtime)
+    chunk_index_arr = CHUNK_INDEX
+
+    fuzz(runtime, chunk_index_arr)
 
 
 if __name__ == '__main__':
