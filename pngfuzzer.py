@@ -42,8 +42,8 @@ def fuzz_one(fuzzed_filename):
     # seed_hex is a string
     seed_hex = str(binascii.hexlify(content))
     seed_hex = seed_hex[2:len(seed_hex)-1]
-    #print(seed_hex)
-    #print("  ")
+    print(seed_hex)
+    print("  ")
 
     # fuzz it
     chunks = 10 # need to figure out how many chunks
@@ -51,8 +51,8 @@ def fuzz_one(fuzzed_filename):
     chunk_length = 8 # need to figure out how many bytes this chunk has
     chunk_start = 22
     chunk_end = 24
-    random_multihex(seed_hex, chunk_start, chunk_end)
-    #print(seed_hex)
+    seed_hex = random_multihex(seed_hex, chunk_start, chunk_end)
+    print(seed_hex)
     # barr = bytearray.fromhex(seed_hex)
     # fuzzed_data = barr.decode(encoding="ascii", errors="ignore")
 
