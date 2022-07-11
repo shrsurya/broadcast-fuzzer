@@ -28,7 +28,7 @@ def random_num(num):
     return random.randint(0, num)
 
 
-def fuzz(runtime, fuzzed_filename):
+def fuzz_one(fuzzed_filename):
     # count how many files in SEED folder
     seed_arr = glob.glob("Seed/*.png")
     seed_arr_size = len(seed_arr)
@@ -49,10 +49,10 @@ def fuzz(runtime, fuzzed_filename):
     chunk_end = 0
     # random_multihex(seed_hex, chunk_start, chunk_end)
 
-    # make fuzzed data be a new png file
     # barr = bytearray.fromhex(seed_hex)
     # fuzzed_data = barr.decode(encoding="ascii", errors="ignore")
 
+    # make fuzzed data be a new png file
     data = binascii.a2b_hex(seed_hex)
     fuzzed_savepath = "./FuzzedData/fuzzedpng/" + fuzzed_filename
     file = open(fuzzed_savepath, "wb")
@@ -61,9 +61,16 @@ def fuzz(runtime, fuzzed_filename):
     pass
 
 
+def fuzz(run_time):
+    for i in range(0, run_time):
+        file_name = str(i) + ".png"
+        fuzz_one(file_name)
+    return
+
+
 def main():
     runtime = int(sys.argv[1])
-    fuzz(runtime, "test1.png")
+    fuzz(runtime)
 
 
 if __name__ == '__main__':
