@@ -12,8 +12,10 @@ def random_multihex(png_hex, lo_index, hi_index):
     :param hi_index: end index
     :return: hex string of png file, data from start index to end index is replaced
     """
+    print(png_hex[20:30])
     for i in range(lo_index, hi_index):
-        png_hex[i] = random_onehex()
+        png_hex = png_hex[:i] + random_onehex() + png_hex[i + 1:]
+        print(png_hex[20:30])
     return png_hex
 
 
@@ -40,15 +42,17 @@ def fuzz_one(fuzzed_filename):
     # seed_hex is a string
     seed_hex = str(binascii.hexlify(content))
     seed_hex = seed_hex[2:len(seed_hex)-1]
+    #print(seed_hex)
+    #print("  ")
 
     # fuzz it
     chunks = 10 # need to figure out how many chunks
     chunk_num = random_num(chunks)
     chunk_length = 8 # need to figure out how many bytes this chunk has
-    chunk_start = 0
-    chunk_end = 0
-    # random_multihex(seed_hex, chunk_start, chunk_end)
-
+    chunk_start = 22
+    chunk_end = 24
+    random_multihex(seed_hex, chunk_start, chunk_end)
+    #print(seed_hex)
     # barr = bytearray.fromhex(seed_hex)
     # fuzzed_data = barr.decode(encoding="ascii", errors="ignore")
 
