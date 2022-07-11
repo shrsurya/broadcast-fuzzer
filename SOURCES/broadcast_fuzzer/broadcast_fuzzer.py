@@ -28,7 +28,6 @@ class BroadcastFuzzer(object):
         pass
 
 
-
 class ManifestData(object):
     """
     A structure used to represent useful data from the android manifest
@@ -92,13 +91,24 @@ class ManifestData(object):
 
     def __repr__(self) -> str:
         package = "Package Name: "+ self.manifest_package_name
+        num_intents = "\nNumber of intents: " + str(len(self.intent_filters))
         filters = "\n"
-        for i in self.intent_filters:
-            filters += str(i) + '\n'
-        ret_str = package+filters
+        intent_data_types=set()
+        intent_data_str = "\n"
+        for index, i in enumerate(self.intent_filters):
+            filters += str(index+1)+". "+ str(i) + '\n'
+            intent_data_types.add(i.data_mimetype)
+        for index, d in enumerate(intent_data_types):
+            intent_data_str += str(index+1)+". "+ str(d)+ '\n'
+        num_unique_intent_types = "No. of unique intent types: "+ str(len(intent_data_types))
+        ret_str = package + num_intents + filters + num_unique_intent_types + intent_data_str
         return ret_str
 
+
 class IntentFilter(object):
+    """
+    A structure used to store the necessary information of an Intent Filter
+    """
     def __init__(self, sar_type, sar_name, action_name, data_mimetype) -> None:
         # sar: Service, activity, reciever
         self.sar_type = sar_type
@@ -108,13 +118,7 @@ class IntentFilter(object):
 
     def __repr__(self) -> str:
         return self.sar_type +": "+ self.sar_name + "\naction_name: "+ self.action_name+ "\ndata_mimetype: "+ self.data_mimetype
-
-# if __name__ == "__main__":
-#     md = manifest_data("../../xmls/telegram_manifest.xml")
-#     print(len(md.intent_filters))
-#     for i in md.intent_filters:
-#         print(i)
     
-# if __name__ == "__main__":
-#     broadcastFuzzer1 =  BroadcastFuzzer(**{"manifest":"../../xmls/telegram_manifest.xml"})
-#     print(broadcastFuzzer1.manifest_data)
+if __name__ == "__main__":
+    broadcastFuzzer1 =  BroadcastFuzzer(**{"manifest":"../../xmls/telegram_manifest.xml"})
+    #print(broadcastFuzzer1.manifest_data)
