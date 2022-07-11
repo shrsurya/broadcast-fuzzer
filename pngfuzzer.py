@@ -37,9 +37,9 @@ def fuzz(runtime, fuzzed_filename):
     # get hex value of seed png file
     with open(seed_file_path, 'rb') as f:
         content = f.read()
+    # seed_hex is a string
     seed_hex = str(binascii.hexlify(content))
     seed_hex = seed_hex[2:len(seed_hex)-1]
-    print(seed_hex)
 
     # fuzz it
     chunks = 10 # need to figure out how many chunks
@@ -50,11 +50,13 @@ def fuzz(runtime, fuzzed_filename):
     # random_multihex(seed_hex, chunk_start, chunk_end)
 
     # make fuzzed data be a new png file
-    barr = bytearray.fromhex(seed_hex)
-    fuzzed_data = barr.decode(encoding="ascii", errors="ignore")
+    # barr = bytearray.fromhex(seed_hex)
+    # fuzzed_data = barr.decode(encoding="ascii", errors="ignore")
+
+    data = binascii.a2b_hex(seed_hex)
     fuzzed_savepath = "./FuzzedData/fuzzedpng/" + fuzzed_filename
-    file = open(fuzzed_savepath, "w")
-    file.write(fuzzed_data)
+    file = open(fuzzed_savepath, "wb")
+    file.write(data)
     file.close()
     pass
 
