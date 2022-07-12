@@ -12,7 +12,7 @@ from .broadcast_fuzzer import BroadcastFuzzer
               default=False,
               is_flag=True,
               help="Don't make changes, just print expected actions")
-@click.option('--print','-p',
+@click.option('--print', '-p',
               default=False,
               is_flag=True,
               help="Print the manifest data")
