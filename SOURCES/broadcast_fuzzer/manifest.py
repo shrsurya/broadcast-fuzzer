@@ -85,11 +85,12 @@ class IntentFilter(object):
     """
     def __init__(self, id, sar_type, sar_name, action_name, data_mimetype) -> None:
         # sar: Service, activity, reciever
-        self.id = id
+
         self.sar_type = sar_type
         self.sar_name = sar_name
         self.action_name = action_name
         self.data_mimetype = data_mimetype
+        self.id = str(self.sar_name.split(".")[-1])+"_"+str(id)
 
     def __repr__(self) -> str:
         return str(self.id)+". "+ self.sar_type +": "+ self.sar_name + "\naction_name: "+ self.action_name+ "\ndata_mimetype: "+ self.data_mimetype

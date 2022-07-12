@@ -1,6 +1,7 @@
 import binascii
 import os
 import sys
+from pathlib import Path
 import random
 import glob
 # from . import constant
@@ -42,7 +43,7 @@ def random_num(num):
     return random.randint(0, num)
 
 
-def fuzz_one_file(file_type, fuzzed_filename, fuzz_index_arr, seed_path, data_path):
+def fuzz_one_file(intent_id, file_type, fuzzed_filename, fuzz_index_arr, seed_path, data_path):
     """
     :param file_type: what type of fuzzed data to generate
     :param fuzzed_filename: fuzzed data name
@@ -50,7 +51,7 @@ def fuzz_one_file(file_type, fuzzed_filename, fuzz_index_arr, seed_path, data_pa
     :return: fuzzed data
     """
     # count how many files in SEED folder
-    full_seed_path = seed_path + file_type + "/*.png"
+    full_seed_path = seed_path + file_type + "/*." + file_type
     seed_arr = glob.glob(full_seed_path)
     seed_arr_size = len(seed_arr)
     if seed_arr_size == 0:
@@ -70,11 +71,9 @@ def fuzz_one_file(file_type, fuzzed_filename, fuzz_index_arr, seed_path, data_pa
         chunk_end = fuzz_index_arr[i][1]
         seed_hex = random_multihex(seed_hex, chunk_start, chunk_end)
 
-    #print("seed_hex  ", seed_hex)
-
     # make fuzzed data be a new png file
     data = binascii.a2b_hex(seed_hex)
-    fuzzed_savepath = data_path + file_type + "/" + fuzzed_filename
+    fuzzed_savepath = data_path + fuzzed_filename
 
     # print("in fuzz  22", fuzzed_savepath)
     file = open(fuzzed_savepath, "wb")
@@ -82,20 +81,17 @@ def fuzz_one_file(file_type, fuzzed_filename, fuzz_index_arr, seed_path, data_pa
     file.close()
 
 
-def fuzz(file_type, data_runs, seed_path, data_path):
+def fuzz(intent_id, file_type, data_runs, seed_path, data_path):
+    # add intent_id to data_path
+    data_path = data_path + "/" + intent_id + "-" + file_type + "/"
+    # making a new folder
+    Path(data_path).mkdir(parents=True, exist_ok=True)
+    # check if the folder exists
     if not os.path.isdir(seed_path):
         raise Exception("Error: Cannot find seed folder!")
     if not os.path.isdir(data_path):
         raise Exception("Error: Cannot find path to store fuzzed data!")
 
-    # path where the fuzzed data will be saved
-    fuzzed_savepath = data_path + file_type + "/*.png"
-    # get the num of files in fuzzed_savepath
-    fuzz_arr = glob.glob(fuzzed_savepath)
-    # if there are files, skip creation of new files
-    if len(fuzz_arr) != 0:
-        print("pngs already exist")
-        pass
     # For each run
     for i in range(data_runs):
         # first creates random num of chunks to fuzz
@@ -109,7 +105,7 @@ def fuzz(file_type, data_runs, seed_path, data_path):
         file_name = str(i) + "." + file_type
 
         # create a new fuzzed file
-        fuzz_one_file(file_type, file_name, fuzz_index_arr, seed_path, data_path)
+        fuzz_one_file(intent_id, file_type, file_name, fuzz_index_arr, seed_path, data_path)
 
 
 # if __name__ == '__main__':

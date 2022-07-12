@@ -51,7 +51,7 @@ class BroadcastFuzzer(object):
             try:
                 intent_type = self.MIMETYPE_FILETYPE_DICT[intent.data_mimetype]
                 if intent_type == 'png':
-                    fuzz(intent_type, self.data_runs, self.seed_path, self.data_path)
+                    fuzz(intent.id, intent_type, self.data_runs, self.seed_path, self.data_path)
             except:
                 pass
         pass
