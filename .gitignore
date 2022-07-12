@@ -132,3 +132,6 @@ dmypy.json
 # apk files
 *.apk
 apk/
+
+#idea
+.idea/
