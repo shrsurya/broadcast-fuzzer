@@ -23,6 +23,6 @@ setup(
         "Operating System :: OS Independent",
     ],
     entry_points={
-        'console_scripts':['broadcast-fuzzer=broadcast_fuzzer:cli']
+        'console_scripts':['bfuzz=broadcast_fuzzer:cli']
     }
 )
