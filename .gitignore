@@ -133,5 +133,8 @@ dmypy.json
 *.apk
 apk/
 
-#idea
+# idea
 .idea/
+
+# fuzzed_data
+FuzzedData/
