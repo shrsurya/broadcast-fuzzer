@@ -69,10 +69,10 @@ class ManifestData(object):
         filters = "\n"
         intent_data_types=set()
         intent_data_str = "\n"
-        for index, i in enumerate(self.intent_filters):
-            filters += str(index+1)+". "+ str(i) + '\n'
+        for i in self.intent_filters:
+            filters += str(i) + '\n'
             intent_data_types.add(i.data_mimetype)
-        for d in enumerate(intent_data_types):
+        for d in intent_data_types:
             intent_data_str += str(d)+ '\n'
         num_unique_intent_types = "No. of unique intent types: "+ str(len(intent_data_types))
         ret_str = package + num_intents + filters + num_unique_intent_types + intent_data_str

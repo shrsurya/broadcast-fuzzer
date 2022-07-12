@@ -42,7 +42,7 @@ def random_num(num):
     return random.randint(0, num)
 
 
-def fuzz_one(file_type, fuzzed_filename, fuzz_index_arr, seed_path, data_path):
+def fuzz_one_file(file_type, fuzzed_filename, fuzz_index_arr, seed_path, data_path):
     """
     :param file_type: what type of fuzzed data to generate
     :param fuzzed_filename: fuzzed data name
@@ -75,25 +75,41 @@ def fuzz_one(file_type, fuzzed_filename, fuzz_index_arr, seed_path, data_path):
     # make fuzzed data be a new png file
     data = binascii.a2b_hex(seed_hex)
     fuzzed_savepath = data_path + file_type + "/" + fuzzed_filename
+
     # print("in fuzz  22", fuzzed_savepath)
     file = open(fuzzed_savepath, "wb")
     file.write(data)
     file.close()
 
 
-def fuzz(file_type, fuzz_time, seed_path, data_path):
+def fuzz(file_type, data_runs, seed_path, data_path):
     if not os.path.isdir(seed_path):
         raise Exception("Error: Cannot find seed folder!")
     if not os.path.isdir(data_path):
         raise Exception("Error: Cannot find path to store fuzzed data!")
-    for i in range(0, fuzz_time):
+
+    # path where the fuzzed data will be saved
+    fuzzed_savepath = data_path + file_type + "/*.png"
+    # get the num of files in fuzzed_savepath
+    fuzz_arr = glob.glob(fuzzed_savepath)
+    # if there are files, skip creation of new files
+    if len(fuzz_arr) != 0:
+        print("pngs already exist")
+        pass
+    # For each run
+    for i in range(data_runs):
+        # first creates random num of chunks to fuzz
         total_random_chunks = random_num(len(CHUNK_INDEX) - 1)
         fuzz_index_arr = []
+        # then, picks random chunks to fuzz
         for j in range(total_random_chunks):
             random_temp = random_num(len(CHUNK_INDEX) - 1)
             fuzz_index_arr.append(CHUNK_INDEX[random_temp])
+        # new unique filename
         file_name = str(i) + "." + file_type
-        fuzz_one(file_type, file_name, fuzz_index_arr, seed_path, data_path)
+
+        # create a new fuzzed file
+        fuzz_one_file(file_type, file_name, fuzz_index_arr, seed_path, data_path)
 
 
 # if __name__ == '__main__':
