@@ -39,6 +39,7 @@ class ManifestData(object):
         # Get the current sar tags's name
         sar_name = sar.attrib[self.ANDROID_STR_NAME]
         # Get all useful intent filters within the current sar tag
+        valid_intent_count = 1
         for sar_child in sar:
             if sar_child.tag == "intent-filter":
                 # we only care about activities that have a data tag
@@ -58,8 +59,9 @@ class ManifestData(object):
                 # if the intent doesn't have a mimeType, we dont care about it
                 # Otherwise, we create a new intent filter and add it to the manifest_data object
                 if data_mimetype != "":
-                    intent = IntentFilter(sar_type, sar_name, action_name, data_mimetype)
+                    intent = IntentFilter(valid_intent_count, sar_type, sar_name, action_name, data_mimetype)
                     self.intent_filters.append(intent)
+                    valid_intent_count +=1
 
     def __repr__(self) -> str:
         package = "Package Name: "+ self.manifest_package_name
@@ -81,12 +83,13 @@ class IntentFilter(object):
     """
     A structure used to store the necessary information of an Intent Filter
     """
-    def __init__(self, sar_type, sar_name, action_name, data_mimetype) -> None:
+    def __init__(self, id, sar_type, sar_name, action_name, data_mimetype) -> None:
         # sar: Service, activity, reciever
+        self.id = id
         self.sar_type = sar_type
         self.sar_name = sar_name
         self.action_name = action_name
         self.data_mimetype = data_mimetype
 
     def __repr__(self) -> str:
-        return self.sar_type +": "+ self.sar_name + "\naction_name: "+ self.action_name+ "\ndata_mimetype: "+ self.data_mimetype
+        return self.id+". "+ self.sar_type +": "+ self.sar_name + "\naction_name: "+ self.action_name+ "\ndata_mimetype: "+ self.data_mimetype

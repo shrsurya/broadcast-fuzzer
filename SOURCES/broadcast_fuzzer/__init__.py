@@ -16,5 +16,18 @@ from .broadcast_fuzzer import BroadcastFuzzer
               default=False,
               is_flag=True,
               help="Print the manifest data")
+@click.option('--data_runs', '-dr',
+              default=10,
+              help="Number of fuzzed files you want to create")
+@click.option('--gen', '-g',
+              default=False,
+              is_flag=True,
+              help="Execute Fuzzed data generation")
+@click.option('--data_path', '-dp',
+              default="../../FuzzedData/",
+              help="Folder where you want the Fuzzed data")
+@click.option('--seed_path', '-sp',
+              default="../../SEED/",
+              help="Path where you get Seed files")
 def cli(**kwargs):
     BroadcastFuzzer(**kwargs)

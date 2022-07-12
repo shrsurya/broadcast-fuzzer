@@ -41,17 +41,24 @@ def random_num(num):
     return random.randint(0, num)
 
 
-def fuzz_one(file_type, fuzzed_filename, fuzz_index_arr):
+def fuzz_one(file_type, fuzzed_filename, fuzz_index_arr, seed_path, data_path):
     """
-    :param fuzzed_filename:
-    :param fuzz_index_arr:
-    :return:
+    :param file_type: what type of fuzzed data to generate
+    :param fuzzed_filename: fuzzed data name
+    :param fuzz_index_arr: store index of important chunks
+    :return: fuzzed data
     """
     # count how many files in SEED folder
-    seed_path = "../../SEED/" + file_type + "/*.png"
-    # print(seed_path)
-    seed_arr = glob.glob(seed_path)
+    full_seed_path = seed_path + file_type + "/*.png"
+
+    #print(full_seed_path)
+    seed_arr = glob.glob(full_seed_path)
+    print(seed_arr)
+    print("seed_arr  ", seed_arr)
+
     seed_arr_size = len(seed_arr)
+    print("seed_arr_size  ", seed_arr_size)
+
     # randomly pick a seed png file and get hex value of it
     seed_file_path = seed_arr[random_num(seed_arr_size - 1)]
     with open(seed_file_path, 'rb') as f:
@@ -66,37 +73,27 @@ def fuzz_one(file_type, fuzzed_filename, fuzz_index_arr):
         chunk_end = fuzz_index_arr[i][1]
         seed_hex = random_multihex(seed_hex, chunk_start, chunk_end)
 
-    # barr = bytearray.fromhex(seed_hex)
-    # fuzzed_data = barr.decode(encoding="ascii", errors="ignore")
+    print("seed_hex  ", seed_hex)
 
     # make fuzzed data be a new png file
     data = binascii.a2b_hex(seed_hex)
-    fuzzed_savepath = "../../FuzzedData/Fuzzed" + file_type + "/" + fuzzed_filename
+    fuzzed_savepath = data_path + file_type + "/" + fuzzed_filename
+    print("in fuzz  22", fuzzed_savepath)
     file = open(fuzzed_savepath, "wb")
     file.write(data)
     file.close()
-    pass
 
 
-def fuzz(file_type, fuzz_time, chunk_index_arr):
+def fuzz(file_type, fuzz_time, seed_path, data_path):
     for i in range(0, fuzz_time):
-        total_random_chunks = random_num(len(chunk_index_arr) - 1)
+        total_random_chunks = random_num(len(CHUNK_INDEX) - 1)
         fuzz_index_arr = []
         for j in range(total_random_chunks):
-            random_temp = random_num(len(chunk_index_arr) - 1)
-            fuzz_index_arr.append(chunk_index_arr[random_temp])
+            random_temp = random_num(len(CHUNK_INDEX) - 1)
+            fuzz_index_arr.append(CHUNK_INDEX[random_temp])
         file_name = str(i) + "." + file_type
-        fuzz_one(file_type, file_name, fuzz_index_arr)
-    return
+        fuzz_one(file_type, file_name, fuzz_index_arr, seed_path, data_path)
 
 
-def main():
-    file_type = str(sys.argv[1])
-    fuzz_time = int(sys.argv[2])
-    chunk_index_arr = CHUNK_INDEX
-
-    fuzz(file_type, fuzz_time, chunk_index_arr)
-
-
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     fuzz("png", 10, "../../SEED/", "../../FuzzedData/")
