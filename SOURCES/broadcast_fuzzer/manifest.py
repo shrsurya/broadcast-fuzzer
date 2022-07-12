@@ -72,8 +72,8 @@ class ManifestData(object):
         for index, i in enumerate(self.intent_filters):
             filters += str(index+1)+". "+ str(i) + '\n'
             intent_data_types.add(i.data_mimetype)
-        for index, d in enumerate(intent_data_types):
-            intent_data_str += str(index+1)+". "+ str(d)+ '\n'
+        for d in enumerate(intent_data_types):
+            intent_data_str += str(d)+ '\n'
         num_unique_intent_types = "No. of unique intent types: "+ str(len(intent_data_types))
         ret_str = package + num_intents + filters + num_unique_intent_types + intent_data_str
         return ret_str
@@ -92,4 +92,4 @@ class IntentFilter(object):
         self.data_mimetype = data_mimetype
 
     def __repr__(self) -> str:
-        return self.id+". "+ self.sar_type +": "+ self.sar_name + "\naction_name: "+ self.action_name+ "\ndata_mimetype: "+ self.data_mimetype
+        return str(self.id)+". "+ self.sar_type +": "+ self.sar_name + "\naction_name: "+ self.action_name+ "\ndata_mimetype: "+ self.data_mimetype

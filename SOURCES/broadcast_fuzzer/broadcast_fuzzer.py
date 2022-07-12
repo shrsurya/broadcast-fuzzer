@@ -10,8 +10,11 @@ class BroadcastFuzzer(object):
     broadcast fuzzer
     """
     REQUIRED = ['manifest']
-    MIMETYPE_FILETYPE_DICT = {'image/*': 'png'}
-
+    MIMETYPE_FILETYPE_DICT = {'image/*': 'png',
+                              'text/plain': 'txt',
+                              "text/*": "txt",
+                              "video/*": "mp4",
+                              "*/*": "any"}
 
     def __init__(self, **kwargs) -> None:
         """Configure self and execute"""
@@ -44,27 +47,11 @@ class BroadcastFuzzer(object):
 
     def generate_fuzzed_data(self):
         for intent in self.manifest_data.intent_filters:
+            # if mimetype is in the global dic, fuzz, else skip
             try:
                 intent_type = self.MIMETYPE_FILETYPE_DICT[intent.data_mimetype]
-                print(intent_type)
-                print(self.data_runs)
-                print(self.seed_path)
-                print(self.data_path)
                 if intent_type == 'png':
                     fuzz(intent_type, self.data_runs, self.seed_path, self.data_path)
-                # print("test")
             except:
                 pass
-        pass
-
-    def extract_apk(self, apk_path, extract_folder):
-        """
-        TODO: Not a priority as of now
-        Use apktool to extract apk file
-        apk_path: absolute path the apk file
-        extract_folder:
-        apktool d -s yourapk.apk -o yourfolder 
-
-        Assumes: user has apktool installed
-        """
         pass

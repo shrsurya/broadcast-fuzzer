@@ -24,10 +24,10 @@ from .broadcast_fuzzer import BroadcastFuzzer
               is_flag=True,
               help="Execute Fuzzed data generation")
 @click.option('--data_path', '-dp',
-              default="../../FuzzedData/",
+              default="FuzzedData/",
               help="Folder where you want the Fuzzed data")
 @click.option('--seed_path', '-sp',
-              default="../../SEED/",
+              default="SEED/",
               help="Path where you get Seed files")
 def cli(**kwargs):
     BroadcastFuzzer(**kwargs)
