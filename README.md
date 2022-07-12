@@ -15,4 +15,4 @@ Option 2: \
 4. `pip3 install .`
 
 Usage:
-1. `bfuzz -m 'path to AndroidManifest.xml -p`(parse manifest file and print manifest data found)
+1. `buzz -m 'path to AndroidManifest.xml -p`(parse manifest file and print manifest data found)
