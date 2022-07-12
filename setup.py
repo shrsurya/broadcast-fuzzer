@@ -7,7 +7,7 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 
 setup(
     name='broadcast-fuzzer',
-    version='1.0.0.1',
+    version='0.0.1',
     python_requires='>3.7',
     description='Tool to fuzz android broadcast receivers',
     author='s4suryan',
