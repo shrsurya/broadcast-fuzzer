@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# VSCode configs
+.vscode
+
 # Distribution / packaging
 .Python
 build/
@@ -138,3 +141,6 @@ apk/
 
 # fuzzed_data
 FuzzedData/
+
+# log files
+.log

@@ -3,21 +3,13 @@ logger = logging.getLogger(__name__)
 import xml.etree.ElementTree as ET
 from manifest import ManifestData
 from data_generator import fuzz
+from constants import Constants
 
 class BroadcastFuzzer(object):
     """
     A class to handle the various functionalities of
     broadcast fuzzer
     """
-    REQUIRED = ["manifest"]
-    MIMETYPE_FILETYPE_DICT = {
-                                "image/*": "png",
-                                "text/plain": "txt",
-                                "text/*": "txt",
-                                "video/*": "mp4",
-                                "*/*": "any"
-                            }
-
     def __init__(self, **kwargs) -> None:
         """Configure self and execute"""
 
@@ -78,7 +70,7 @@ class BroadcastFuzzer(object):
         for intent in self.intents:
             # if mimetype is in the global dic, fuzz, else skip
             try:
-                intent_type = self.MIMETYPE_FILETYPE_DICT[intent.data_mimetype]
+                intent_type = Constants.MIMETYPE_FILETYPE_DICT[intent.data_mimetype]
                 if intent_type == "png":
                     fuzz(
                         intent.id, 
@@ -90,6 +82,8 @@ class BroadcastFuzzer(object):
                     # add a path for each intent with fuzzed data
                     path = self.data_path + intent.id + "-" + intent_type + "/"
                     self.intent_to_fuzzed_data_folder_path_dict[intent.id] = path
+                if intent_type == 'png':
+                    fuzz(intent.id, intent_type, self.data_runs, self.seed_path, self.data_path)
             except:
                 pass
 
