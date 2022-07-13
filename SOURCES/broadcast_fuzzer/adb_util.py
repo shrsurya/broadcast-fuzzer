@@ -12,14 +12,23 @@ class adbUtil(object):
         self.adb_path = adb_path
 
     def copy_to_android(self,src,dest):
+        """
+        Copies data from give src dir to dest dir in android device
+        args:
+            src: source path
+            dest: destination path on android device (permissible path)
+        returns:
+            ret: code (0 for success, else failure)
+        """
         #./adb push ../SEED/png/ /storage/self/primary/buzzData'
         log.debug('copy_to_android()')
         log.debug('src = '+src)
         log.debug('dest ='+src)
+        # Ensures that size of file is below MAX_FUZZ_DATA_SIZE_CAP
         nbytes = sum(d.stat().st_size for d in os.scandir(src) if d.is_file())
         log.debug('size of source = %d',nbytes)
         if nbytes < Constants.MAX_FUZZ_DATA_SIZE_CAP:
-            log.debug('source is %d less than %d',nbytes,Constants.MAX_FUZZ_SIZE_CAP)
+            log.debug('source is %d less than %d',nbytes,Constants.MAX_FUZZ_DATA_SIZE_CAP)
             ret = subprocess.call([self.adb_path,"push",src,dest])
         else:
             ret = -1
@@ -53,9 +62,9 @@ class adbUtil(object):
     def get_device_list(self):
         '/adb devices -l'
         device_list = []
-        self.log.debug('is_device_conn()')
+        log.debug('is_device_conn()')
         output = subprocess.check_output([self.adb_path,'devices','-l'])
-        self.log.debug(output)
+        log.debug(output)
         output = output.split(b'\n') 
         for line in output:
             device = line.decode('utf-8',errors='')
@@ -67,14 +76,14 @@ class adbUtil(object):
 
     '''Gets the whole log dump from logcat returns a file descriptor'''
     def get_logcat(self):
-        self.log.debug('get_logcat')
+        log.debug('get_logcat')
         log_dump = subprocess.check_output([self.adb_path,'logcat','-d'])
-        #self.log.debug(log_dump)
+        #log.debug(log_dump)
         return log_dump
 
     
     '''Clears logs created in the android logcat'''
     def clear_logs(self):
         log_dump = subprocess.run([self.adb_path,'logcat','-c'])
-        self.log.debug('log_dump.returncode is '+log_dump.returncode)
+        log.debug('log_dump.returncode is '+log_dump.returncode)
         return log_dump.returncode

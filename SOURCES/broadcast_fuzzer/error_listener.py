@@ -1,6 +1,6 @@
 # Use adb and logcat cmd tool to listen to the error log
 from constants import Constants
-from adbutil import adbUtil
+from adb_util import adbUtil
 import time
 import os
 

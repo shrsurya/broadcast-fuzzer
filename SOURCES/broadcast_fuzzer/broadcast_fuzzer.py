@@ -1,9 +1,12 @@
 import logging
+import os
 logger = logging.getLogger(__name__)
-import xml.etree.ElementTree as ET
 from manifest import ManifestData
 from data_generator import fuzz
 from constants import Constants
+from adb_util import adbUtil
+from error_listener import ErrorListener
+
 
 class BroadcastFuzzer(object):
     """
@@ -45,16 +48,23 @@ class BroadcastFuzzer(object):
             self.generate_fuzzed_data()
         
         # if adb path is provided
+        self.adb_path = ""
         if kwargs["adb_path"]:
             self.adb_path = kwargs["adb_path"]
         else:
-            # get env path
-            pass
+            self.adb_path = os.environ.get("ADB_PATH")
+            if self.adb_path == "":
+                raise Exception("Cannot find path to adb tools!")
+
+        self.adb = adbUtil(self.adb_path)
 
         # Execute intent fuzzing
+        # TODO: Simultaneously handle mutliple android devices connected to PC
         if kwargs["execute"]:
-            self.execute()
-
+            if self.adb.is_device_conn():
+                self.execute()
+            else:
+                logger.error("Android device not connected")
 
     def print_manifest(self):
         """
@@ -81,8 +91,8 @@ class BroadcastFuzzer(object):
                         )
                     # add a path for each intent with fuzzed data
                     path = self.data_path + intent.id + "-" + intent_type + "/"
-                    self.intent_to_fuzzed_data_folder_path_dict[intent.id] = path
-                if intent_type == 'png':
+                    self.intent_to_fuzzed_data_folder_path_dict[intent] = path
+                if intent_type == "png":
                     fuzz(intent.id, intent_type, self.data_runs, self.seed_path, self.data_path)
             except:
                 pass
@@ -92,5 +102,48 @@ class BroadcastFuzzer(object):
         """
         Executes the fuzzing of every intent in the manifest
         """
-        for k,v in self.intent_to_fuzzed_data_folder_path_dict.items():
-            print(k, " : ", v)
+        for intent, data_path in self.intent_to_fuzzed_data_folder_path_dict.items():
+            # print(intent_id, " : ", data_path)
+            # Try to copy fuzzed data to the android device
+            ret_code = self.adb.copy_to_android(src=data_path, dest=Constants.DEVICE_FUZZ_DATA_DIR)
+            # if not successful, break
+            if ret_code !=0:
+                logger.debug(ret_code)
+                logger.error("Failed to copy fuzzed data to destination")
+                break
+            # Fire an intent based on files copied to android device
+            for i in range(self.data_runs):
+                # Clearing logs before each intent/test case
+                ret_code = self.adb.clear_logs()
+                # if not successful, break
+                if ret_code !=0:
+                    logger.debug(ret_code)
+                    logger.error("Failed to clear log")
+                    return
+                # file name
+                file_ext = data_path.split("-")[-1]
+                file_name = str(i)+"."+file_ext
+                mobile_data_path = Constants.DEVICE_FUZZ_DATA_DIR + data_path + file_name
+                ret_code = self.adb.send_intent_activity(
+                    mimeType=intent.data_mimetype,
+                    action=intent.action_name,
+                    component_name=intent.sar_name,
+                    data=mobile_data_path,
+                    pkg_name= self.package_name
+                )
+                # if not successful, break
+                if ret_code !=0:
+                    logger.debug(ret_code)
+                    logger.warn(str(intent.id)+" wasn't fired successfully for "+mobile_data_path)
+                    continue
+                # instantiate listener
+                listener = ErrorListener(package_name=self.package_name, timeout=13)
+                errors = listener.listen()
+                # if no errors, we move one
+                if len(errors) == 0:
+                    logger.info("No erros found for ", str(mobile_data_path))
+                    continue
+                
+                # TODO: Create a report, save the logs along with the datafile that caused the crash
+                logger.warn("Crash detected: "+ str(errors))
+
