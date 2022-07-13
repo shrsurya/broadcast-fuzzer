@@ -31,6 +31,14 @@ class BroadcastFuzzer(object):
         else:
             logger.error("manifest file missing")
 
+        # Package name
+        self.package_name = self.manifest_data.manifest_package_name
+        # Intent List
+        self.intents = self.manifest_data.intent_filters
+        # Fuzzed Data Path for each intent
+        # Values added during fuzzed data generation
+        self.intent_to_fuzzed_data_folder_path_dict = dict()
+
         # Print Manifest Data
         if kwargs["print"]:
             self.print_manifest()
@@ -67,7 +75,7 @@ class BroadcastFuzzer(object):
         """
         Generates fuzzed data for each intent in the manifest
         """
-        for intent in self.manifest_data.intent_filters:
+        for intent in self.intents:
             # if mimetype is in the global dic, fuzz, else skip
             try:
                 intent_type = self.MIMETYPE_FILETYPE_DICT[intent.data_mimetype]
@@ -79,6 +87,9 @@ class BroadcastFuzzer(object):
                         self.seed_path, 
                         self.data_path
                         )
+                    # add a path for each intent with fuzzed data
+                    path = self.data_path + intent.id + "-" + intent_type + "/"
+                    self.intent_to_fuzzed_data_folder_path_dict[intent.id] = path
             except:
                 pass
 
@@ -87,4 +98,5 @@ class BroadcastFuzzer(object):
         """
         Executes the fuzzing of every intent in the manifest
         """
-        pass
+        for k,v in self.intent_to_fuzzed_data_folder_path_dict.items():
+            print(k, " : ", v)
