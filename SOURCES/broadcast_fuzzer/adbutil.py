@@ -1,12 +1,39 @@
+from logging import log
 import subprocess
+import os
 import logger
+log = logger.get_logger(__name__)
+from constants import Constants
 
 '''This class will contain utility functions that will use the adb cmd tool'''
 class adbUtil(object):
 
     def __init__(self,adb_path):
-        self.log =  logger.get_logger(__name__)
         self.adb_path = adb_path
+
+    def copy_to_android(self,src,dest):
+        #./adb push ../SEED/png/ /storage/self/primary/buzzData'
+        log.debug('copy_to_android()')
+        log.debug('src = '+src)
+        log.debug('dest ='+src)
+        nbytes = sum(d.stat().st_size for d in os.scandir(src) if d.is_file())
+        log.debug('size of source = %d',nbytes)
+        if nbytes < Constants.MAX_FUZZ_DATA_SIZE_CAP:
+            log.debug('source is %d less than %d',nbytes,Constants.MAX_FUZZ_SIZE_CAP)
+            ret = subprocess.call([self.adb_path,"push",src,dest])
+        else:
+            ret = -1
+        return ret
+        
+    def send_intent_activity(self,mimeType,activity_name,data,pkg_name):
+        '''Launch intents of given mimeType'''
+        # adb shell am start -a android.intent.action.SEND --es "android.intent.extra.TEXT" \"calling you\" -t "text/plain" -n "org.telegram.messenger/org.telegram.ui.LaunchActivity" 
+        if mimeType == Constants.textType:
+            ret = subprocess.call([self.adb_path,'shell','am','start','--es'
+            ,'"android.intent.extra.TEXT"','\"data\"', '-t',mimeType,'-n','pkg_name/activity_name'])
+            return ret
+        elif mimeType == Constants.pngType:
+            pass
 
     '''Function to check if at least one device is connected'''
     def is_device_conn(self):
@@ -27,12 +54,7 @@ class adbUtil(object):
                 device_list.append(device)
         device_list.pop(0) # Remove the first message line that says 'List of Devices'
         return device_list
-    # def get_logcat(self):
-    #     self.log.debug('get_logcat')
-    #     log_dump = subprocess.Popen([self.adb_path,'logcat','-d'],stdout=subprocess.PIPE)
-    #     errors = subprocess.check_output(['grep','-E' ,'NullPointerException.*telegram'],stdin=log_dump.stdout) 
-    #     log_dump.wait()
-    #     return errors
+
 
     '''Gets the whole log dump from logcat returns a file descriptor'''
     def get_logcat(self):
