@@ -1,14 +1,10 @@
 import xml.etree.ElementTree as ET
+from constants import Constants
 
 class ManifestData(object):
     """
     A structure used to represent useful data from the android manifest
     """
-    # Global strings
-    ANDROID_STR = "{http://schemas.android.com/apk/res/android}"
-    ANDROID_STR_NAME = ANDROID_STR+"name"
-    ANDROID_STR_MIMETYPE = ANDROID_STR+"mimeType"
-
     def __init__(self, manifest_xml) -> None:
         self.manifest_xml = manifest_xml
         self.manifest_package_name = ""
@@ -37,7 +33,7 @@ class ManifestData(object):
         # Get what type of sar being parsed
         sar_type = sar.tag
         # Get the current sar tags"s name
-        sar_name = sar.attrib[self.ANDROID_STR_NAME]
+        sar_name = sar.attrib[Constants.ANDROID_STR_NAME]
         # Get all useful intent filters within the current sar tag
         valid_intent_count = 1
         for sar_child in sar:
@@ -48,11 +44,11 @@ class ManifestData(object):
                 for sar_child_child in sar_child:
                     # Action name is required for each intent filter
                     if sar_child_child.tag == "action":
-                        action_name = sar_child_child.attrib[self.ANDROID_STR_NAME]
+                        action_name = sar_child_child.attrib[Constants.ANDROID_STR_NAME]
                     elif sar_child_child.tag == "data":
                         # if the data tag as mime type, it will get it
                         try:
-                            data_mimetype = sar_child_child.attrib[self.ANDROID_STR_MIMETYPE]
+                            data_mimetype = sar_child_child.attrib[Constants.ANDROID_STR_MIMETYPE]
                         # otherwise it will stay empty
                         except:
                             pass

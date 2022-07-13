@@ -12,3 +12,6 @@ class Constants(object):
     INTENT_EXTRA_TEXT = 'android.intent.extra.TEXT'
     INTENT_ACTION_SEND = 'android.intent.action.SEND'
     INTENT_EXTRA_STREAM = 'android.intent.extra.STREAM'
+    ANDROID_STR = "{http://schemas.android.com/apk/res/android}"
+    ANDROID_STR_NAME = ANDROID_STR+"name"
+    ANDROID_STR_MIMETYPE = ANDROID_STR+"mimeType"
