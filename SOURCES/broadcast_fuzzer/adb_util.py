@@ -23,7 +23,7 @@ class adbUtil(object):
         #./adb push ../SEED/png/ /storage/self/primary/buzzData'
         log.debug('copy_to_android()')
         log.debug('src = '+src)
-        log.debug('dest ='+src)
+        log.debug('dest ='+dest)
         # Ensures that size of file is below MAX_FUZZ_DATA_SIZE_CAP
         nbytes = sum(d.stat().st_size for d in os.scandir(src) if d.is_file())
         log.debug('size of source = %d',nbytes)
@@ -85,5 +85,5 @@ class adbUtil(object):
     '''Clears logs created in the android logcat'''
     def clear_logs(self):
         log_dump = subprocess.run([self.adb_path,'logcat','-c'])
-        log.debug('log_dump.returncode is '+log_dump.returncode)
+        log.debug('log_dump.returncode is '+str(log_dump.returncode))
         return log_dump.returncode

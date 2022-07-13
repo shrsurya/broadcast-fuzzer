@@ -90,7 +90,7 @@ class BroadcastFuzzer(object):
                         self.data_path
                         )
                     # add a path for each intent with fuzzed data
-                    path = self.data_path + intent.id + "-" + intent_type + "/"
+                    path = self.data_path + intent.id + "_" + intent_type + "/"
                     self.intent_to_fuzzed_data_folder_path_dict[intent] = path
                 if intent_type == "png":
                     fuzz(intent.id, intent_type, self.data_runs, self.seed_path, self.data_path)
@@ -105,6 +105,9 @@ class BroadcastFuzzer(object):
         for intent, data_path in self.intent_to_fuzzed_data_folder_path_dict.items():
             # print(intent_id, " : ", data_path)
             # Try to copy fuzzed data to the android device
+            if not os.path.isdir(data_path):
+                logger.error("Invalid fuzzed data dir")
+                break
             ret_code = self.adb.copy_to_android(src=data_path, dest=Constants.DEVICE_FUZZ_DATA_DIR)
             # if not successful, break
             if ret_code !=0:
@@ -121,7 +124,8 @@ class BroadcastFuzzer(object):
                     logger.error("Failed to clear log")
                     return
                 # file name
-                file_ext = data_path.split("-")[-1]
+                file_ext = data_path.split("_")[-1]
+                file_ext = file_ext[:-1]
                 file_name = str(i)+"."+file_ext
                 mobile_data_path = Constants.DEVICE_FUZZ_DATA_DIR + data_path + file_name
                 ret_code = self.adb.send_intent_activity(

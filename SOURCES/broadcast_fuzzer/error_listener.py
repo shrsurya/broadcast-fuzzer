@@ -52,3 +52,4 @@ class ErrorListener(object):
                 raise Exception("No device connected!")
             time.sleep(0.5) # To minimize CPU usage 
             t1 = time.time()
+        return []

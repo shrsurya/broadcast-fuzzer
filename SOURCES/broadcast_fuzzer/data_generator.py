@@ -91,7 +91,7 @@ def fuzz(intent_id, file_type, data_runs, seed_path, data_path):
     :return: fuzzed data
     """
     # add intent_id to data_path
-    data_path = data_path + "/" + intent_id + "-" + file_type + "/"
+    data_path = data_path + "/" + intent_id + "_" + file_type + "/"
     # making a new folder
     Path(data_path).mkdir(parents=True, exist_ok=True)
     # check if the folder exists

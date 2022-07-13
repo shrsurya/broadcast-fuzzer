@@ -1,7 +1,7 @@
 class Constants(object):
     ERROR_PHRASES = ["SIGSEGV","NullPointer","Runtime","Exception","Error"]
     textType = "text/plain"
-    pngType = "image/png"
+    pngType = "image/*"
     mp4Type = "video/mp4"
     MIMETYPE_FILETYPE_DICT = {"image/*": "png",
                             "text/plain": "txt",
@@ -18,4 +18,4 @@ class Constants(object):
     ANDROID_STR_NAME = ANDROID_STR+"name"
     ANDROID_STR_MIMETYPE = ANDROID_STR+"mimeType"
 
-    DEVICE_FUZZ_DATA_DIR = "file:///storage/self/primary/buzzData/"
+    DEVICE_FUZZ_DATA_DIR = "/storage/self/primary/buzzData/"
