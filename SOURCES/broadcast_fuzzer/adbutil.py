@@ -25,15 +25,24 @@ class adbUtil(object):
             ret = -1
         return ret
         
-    def send_intent_activity(self,mimeType,activity_name,data,pkg_name):
+    def send_intent_activity(self,mimeType,action,component_name,data,pkg_name):
         '''Launch intents of given mimeType'''
-        # adb shell am start -a android.intent.action.SEND --es "android.intent.extra.TEXT" \"calling you\" -t "text/plain" -n "org.telegram.messenger/org.telegram.ui.LaunchActivity" 
-        if mimeType == Constants.textType:
-            ret = subprocess.call([self.adb_path,'shell','am','start','--es'
-            ,'"android.intent.extra.TEXT"','\"data\"', '-t',mimeType,'-n','pkg_name/activity_name'])
+        log.debug('send_intent_activity()')
+        log.debug('mimeType ='+mimeType)
+        log.debug('Component Name ='+component_name)
+        log.debug('Package Name ='+pkg_name)
+        if mimeType == Constants.textType:            
+            # adb shell am start -a android.intent.action.SEND --es "android.intent.extra.TEXT" \"My message\" -t "text/plain" -n "org.telegram.messenger/org.telegram.ui.LaunchActivity" 
+            ret = subprocess.call([self.adb_path,'shell','am','start','-a',action,'--es'
+            ,Constants.INTENT_EXTRA_TEXT, "\'"+ data +"\'", '-t',mimeType,'-n',pkg_name +'/'+component_name])
             return ret
         elif mimeType == Constants.pngType:
-            pass
+            # ./adb shell am start -a android.intent.action.SEND -t  image/jpg --eu android.intent.extra.STREAM file:///storage/self/primary/buzzData/test1.png -n "org.telegram.messenger/org.telegram.ui.LaunchActivity"
+            ret = subprocess.call([self.adb_path,'shell','am','start','-a',action,'--eu'
+            ,Constants.INTENT_EXTRA_STREAM, data, '-t',mimeType,'-n',pkg_name +'/'+component_name])
+            return ret
+        else:
+            return -1
 
     '''Function to check if at least one device is connected'''
     def is_device_conn(self):
