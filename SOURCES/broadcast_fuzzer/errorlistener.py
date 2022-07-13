@@ -23,22 +23,22 @@ class ErrorListener(object):
         logcat = self.adbUtil.get_logcat()
         logcat = logcat.split(b'\n')
 
+        # Splitting package name 'org.telegram.messenger' by '.' operator to search log for error
+        package_tags = self.package.split('.')
         # Ignore the first element as package names are usually in reverse DNS order 
         # eg. org.telegram.messenger
-        package_tags = self.package.split('.')
         package_tags = package_tags[1:] 
         
         for line in logcat:
             str_line = line.decode('utf-8',errors='')
             for phrase in Constants.ERROR_PHRASES:
-                if str_line.find(phrase) != -1:
-                    for tags in package_tags:
-                        if str_line.find(tags) != -1:
+                if phrase in str_line:
+                    for tag in package_tags:
+                        if tag in str_line:
                             error_lines.append(str_line)        
         return error_lines
     
     def listen(self):
-        # ./adb logcat -d | grep 'NullPointerException.*telegram'
         
         t0 = time.time()
         t1 = time.time()
@@ -50,5 +50,5 @@ class ErrorListener(object):
                     return errors
             else:
                 raise Exception("No device connected!")
-            time.sleep(1) # Wait for 1 second before sending the next logcat - (experimental value)
+            time.sleep(0.5) # To minimize CPU usage 
             t1 = time.time()
