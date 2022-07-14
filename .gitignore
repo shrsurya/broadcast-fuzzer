@@ -142,5 +142,8 @@ apk/
 # fuzzed_data
 FuzzedData/
 
+# Reports
+Reports/
+
 # log files
-*log*
+*.log*
