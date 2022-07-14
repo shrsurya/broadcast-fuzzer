@@ -65,6 +65,11 @@ class adbUtil(object):
             ret = subprocess.call([self.adb_path,'shell','am','start','-a',action,'--eu'
             ,Constants.INTENT_EXTRA_STREAM, data, '-t',mimeType,'-n',pkg_name +'/'+component_name])
             return ret
+        elif mimeType == Constants.mp4Type:
+            # ./adb shell am start -a android.intent.action.SEND -t  image/jpg --eu android.intent.extra.STREAM file:///storage/self/primary/buzzData/test1.png -n "org.telegram.messenger/org.telegram.ui.LaunchActivity"
+            ret = subprocess.call([self.adb_path,'shell','am','start','-a',action,'--eu'
+            ,Constants.INTENT_EXTRA_STREAM, data, '-t',mimeType,'-n',pkg_name +'/'+component_name])
+            return ret
         else:
             return -1
 

@@ -1,8 +1,8 @@
 class Constants(object):
     ERROR_PHRASES = ["SIGSEGV","NullPointer","Runtime","Exception","Error"]
-    textType = "text/plain"
+    textType = "text/*"
     pngType = "image/*"
-    mp4Type = "video/mp4"
+    mp4Type = "video/*"
     MIMETYPE_FILETYPE_DICT = {"image/*": "png",
                             "text/plain": "txt",
                             "text/*": "txt",
