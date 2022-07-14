@@ -1,6 +1,9 @@
 import logging
 import os
 logger = logging.getLogger(__name__)
+from pathlib import Path
+import shutil
+import time
 from manifest import ManifestData
 from data_generator import fuzz
 from constants import Constants
@@ -156,4 +159,46 @@ class BroadcastFuzzer(object):
                 
                 # TODO: Create a report, save the logs along with the datafile that caused the crash
                 logger.warn("Crash detected: "+ str(errors))
+                self.generate_crash_report( fuzzed_file_path=data_path+file_name,
+                                            error_list=errors,
+                                            intent=intent)
+        #TODO: close the target android application  
+    
+    def generate_crash_report(self, fuzzed_file_path, error_list, intent):
+        """
+        Creates a crash report folder with details of the crash
+        args:
+            fuzzed_file_path: Path the the fuzzed file that caused the crash
+            error_list: A list containing error lines
+            intent: current intent
+        """
+        # get current time
+        timestr = time.strftime("%Y%m%d-%H%M%S")
+        try:
+            # Create a new Reports folder if it doesn't already exist
+            reports_folder_path = 'Reports/'
+            Path(reports_folder_path).mkdir(parents=True, exist_ok=True)
 
+            # Create a new report folder with current datetime
+            current_report_path = reports_folder_path + "report_"+ self.package_name+"_"+str(intent.id) + "_"+ timestr
+            Path(current_report_path).mkdir(parents=True, exist_ok=True)
+        except:
+            logger.warning("Unable to create reports folder")
+            pass
+        
+        try:
+        # Add a log file to the new folder with: 
+        # 1. Intent Details, 2. Errors
+            new_log_file = current_report_path + "/" + timestr + ".log"
+            with open(new_log_file, 'w') as file:
+                str_to_write = "Intent Details:\n" + str(intent) + "\n"
+                for line in error_list:
+                    str_to_write += line + "\n"
+                file.write(str_to_write)
+            # Copy the fuzzed file to the newly created report dir
+            src_path = fuzzed_file_path
+            file_name = fuzzed_file_path.split('/')[-1]
+            dst_path = current_report_path+"/"+file_name
+            shutil.copy2(src=src_path, dst=dst_path)
+        except:
+            logger.warning("Unable to copy log files, "+str(intent.id))
