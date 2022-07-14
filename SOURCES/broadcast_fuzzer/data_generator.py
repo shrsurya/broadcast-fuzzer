@@ -4,6 +4,8 @@ import sys
 from pathlib import Path
 import random
 import glob
+import string
+
 # from . import constant
 
 """
@@ -43,7 +45,19 @@ def random_num(num):
     return random.randint(0, num)
 
 
-def fuzz_one_pngfile(intent_id, file_type, fuzzed_filename, fuzz_index_arr, seed_path, data_path):
+def fuzz_one_txtfile(strlen, data_path, file_name):
+    # generate random string with given length
+    random_str = ""
+    for i in range(strlen):
+        random_str = random_str + random.choice(string.printable)
+    # write to txt file
+    fuzzed_savepath = data_path + file_name
+    file = open(fuzzed_savepath, "w")
+    file.write(random_str)
+    file.close()
+
+
+def fuzz_one_pngfile(file_type, fuzzed_filename, fuzz_index_arr, seed_path, data_path):
     """
     :param intent_id: intent id that will be used to make a new folder store fuzzed data
     :param file_type: what type of fuzzed data to generate
@@ -65,7 +79,7 @@ def fuzz_one_pngfile(intent_id, file_type, fuzzed_filename, fuzz_index_arr, seed
     with open(seed_file_path, 'rb') as f:
         content = f.read()
     seed_hex = str(binascii.hexlify(content))
-    seed_hex = seed_hex[2:len(seed_hex)-1]
+    seed_hex = seed_hex[2:len(seed_hex) - 1]
 
     # fuzz it
     for i in range(len(fuzz_index_arr)):
@@ -102,19 +116,22 @@ def fuzz(intent_id, file_type, data_runs, seed_path, data_path):
 
     # For each run
     for i in range(data_runs):
-        # first creates random num of chunks to fuzz
-        total_random_chunks = random_num(len(PNG_CHUNK_INDEX) - 1)
-        fuzz_index_arr = []
-        # then, picks random chunks to fuzz
-        for j in range(total_random_chunks):
-            random_temp = random_num(len(PNG_CHUNK_INDEX) - 1)
-            fuzz_index_arr.append(PNG_CHUNK_INDEX[random_temp])
-        # new unique filename
-        file_name = str(i) + "." + file_type
-        # create a new fuzzed file
         if file_type == "png":
-            fuzz_one_pngfile(intent_id, file_type, file_name, fuzz_index_arr, seed_path, data_path)
+            # first creates random num of chunks to fuzz
+            total_random_chunks = random_num(len(PNG_CHUNK_INDEX) - 1)
+            fuzz_index_arr = []
+            # then, picks random chunks to fuzz
+            for j in range(total_random_chunks):
+                random_temp = random_num(len(PNG_CHUNK_INDEX) - 1)
+                fuzz_index_arr.append(PNG_CHUNK_INDEX[random_temp])
+            # new unique filename
+            file_name = str(i) + "." + file_type
+            # create a new fuzzed file
+            fuzz_one_pngfile(file_type, file_name, fuzz_index_arr, seed_path, data_path)
+        if file_type == "txt":
+            strlen = random_num(2048)
+            file_name = str(i) + "." + file_type
+            fuzz_one_txtfile(strlen, data_path, file_name)
 
-
-# if __name__ == '__main__':
-#     fuzz("png", 10, "../../SEED/", "../../FuzzedData/")
+    #if __name__ == '__main__':
+    #    fuzz("txt", 10, "../../SEED/", "../../FuzzedData/")
