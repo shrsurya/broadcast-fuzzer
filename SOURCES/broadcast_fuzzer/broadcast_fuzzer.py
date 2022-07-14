@@ -127,7 +127,11 @@ class BroadcastFuzzer(object):
                 file_ext = data_path.split("_")[-1]
                 file_ext = file_ext[:-1]
                 file_name = str(i)+"."+file_ext
-                mobile_data_path = Constants.DEVICE_FUZZ_DATA_DIR + data_path + file_name
+                
+                # Removing the FuzzData/ from the data_path i.e Getting individual intent folder names  
+                subfolder = data_path.split('/')[-2]
+
+                mobile_data_path = Constants.MOBILE_DATA_PATH_PREFIX + Constants.DEVICE_FUZZ_DATA_DIR + subfolder + '/' + file_name
                 ret_code = self.adb.send_intent_activity(
                     mimeType=intent.data_mimetype,
                     action=intent.action_name,

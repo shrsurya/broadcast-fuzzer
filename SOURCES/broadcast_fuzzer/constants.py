@@ -19,3 +19,5 @@ class Constants(object):
     ANDROID_STR_MIMETYPE = ANDROID_STR+"mimeType"
 
     DEVICE_FUZZ_DATA_DIR = "/storage/self/primary/buzzData/"
+    MOBILE_DATA_PATH_PREFIX = "file://"
+    

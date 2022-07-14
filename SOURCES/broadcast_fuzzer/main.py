@@ -14,20 +14,23 @@ if __name__ == '__main__':
     # else:
     #     print('No errors raised within timeout')
 
-# Copy test
-    #calculate total directory size and only copy if smaller that that 
-    adb = adbUtil(adb_path)
-    if adb.copy_to_android(src='../../FuzzedData/LaunchActivity_1_png/',dest='/storage/self/primary/buzzData') == 0:
-        print("Copied!")
-    else:
-        print("failed")
+# # Copy test
+#     #calculate total directory size and only copy if smaller that that 
+#     adb = adbUtil(adb_path)
+#     if adb.copy_to_android(src='../../FuzzedData/LaunchActivity_1_png/',dest='/storage/self/primary/buzzData') == 0:
+#         print("Copied!")
+#     else:
+#         print("failed")
 
 # Intent fire test
         # adb shell am start -a android.intent.action.SEND --es "android.intent.extra.TEXT" \"calling you\" -t "text/plain" -n "org.telegram.messenger/org.telegram.ui.LaunchActivity" 
-    # adb = adbUtil(adb_path)
-    # ret = adb.send_intent_activity(mimeType=Constants.textType
-    # ,component_name='org.telegram.ui.LaunchActivity',action=Constants.INTENT_ACTION_SEND,data='file:///storage/self/primary/buzzData/test1.png',pkg_name=PACKAGE_NAME)
-    # if ret == 0:
-    #     print("success!")
-    # else:
-    #     print("failed to send!")
+    adb = adbUtil(adb_path)
+    ret = adb.send_intent_activity(mimeType=Constants.pngType
+    ,component_name='org.telegram.ui.LaunchActivity',action=Constants.INTENT_ACTION_SEND,
+    data='file:///storage/self/primary/buzzData/LaunchActivity_1_png/0.png',pkg_name=PACKAGE_NAME)
+    'file:///storage/self/primary/buzzData/FuzzedData/LaunchActivity_1_png/0.png'
+
+    if ret == 0:
+        print("success!")
+    else:
+        print("failed to send!")
