@@ -20,4 +20,7 @@ class Constants(object):
 
     DEVICE_FUZZ_DATA_DIR = "/storage/self/primary/buzzData/"
     MOBILE_DATA_PATH_PREFIX = "file://"
+    PNG_CHUNK_INDEX = [[16, 23], [32, 39], [40, 47], [48, 49], [50, 51], [52, 53], [54, 55], [66, 73]]
+    MP4_IMPORTANT_HEADER = ["6d6d7034", "6d646174", "6d6f6f76", "6d766864", "636d6f76", "726d7261"]
+
     

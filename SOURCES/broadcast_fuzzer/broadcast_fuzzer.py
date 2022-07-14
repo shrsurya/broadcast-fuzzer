@@ -99,6 +99,8 @@ class BroadcastFuzzer(object):
                     fuzz(intent.id, intent_type, self.data_runs, self.seed_path, self.data_path)
                 if intent_type == "txt":
                     fuzz(intent.id, intent_type, self.data_runs, self.seed_path, self.data_path)
+                if intent_type == "mp4":
+                    fuzz(intent.id, intent_type, self.data_runs, self.seed_path, self.data_path)
             except:
                 pass
 
