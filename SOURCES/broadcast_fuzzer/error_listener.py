@@ -1,6 +1,6 @@
 # Use adb and logcat cmd tool to listen to the error log
 from constants import Constants
-from adbutil import adbUtil
+from adb_util import adbUtil
 import time
 import os
 
@@ -52,3 +52,4 @@ class ErrorListener(object):
                 raise Exception("No device connected!")
             time.sleep(0.5) # To minimize CPU usage 
             t1 = time.time()
+        return []
