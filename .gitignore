@@ -143,4 +143,4 @@ apk/
 FuzzedData/
 
 # log files
-.log
+*log*

@@ -8,7 +8,7 @@ class Constants(object):
                             "text/*": "txt",
                             "video/*": "mp4",
                             "*/*": "any"}
-    MAX_FUZZ_DATA_SIZE_CAP = 3e+7 # 30 MB file size limit to copy to android
+    MAX_FUZZ_DATA_SIZE_CAP = 4e+7 # 40 MB file size limit to copy to android
     
     INTENT_EXTRA_TEXT = "android.intent.extra.TEXT"
     INTENT_ACTION_SEND = "android.intent.action.SEND"

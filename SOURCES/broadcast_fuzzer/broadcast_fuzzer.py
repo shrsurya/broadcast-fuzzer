@@ -157,3 +157,5 @@ class BroadcastFuzzer(object):
                 # TODO: Create a report, save the logs along with the datafile that caused the crash
                 logger.warn("Crash detected: "+ str(errors))
 
+                # GenerateReport('',errors,)
+
