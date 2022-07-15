@@ -49,7 +49,7 @@ class BroadcastFuzzer(object):
         # if gen flag is true
         if kwargs["gen"]:
             self.generate_fuzzed_data()
-        
+
         # if adb path is provided
         self.adb_path = ""
         if kwargs["adb_path"]:
@@ -92,10 +92,11 @@ class BroadcastFuzzer(object):
                     fuzz(intent.id, intent_type, self.data_runs, self.seed_path, self.data_path)
                 # add a path for each intent with fuzzed data
                 path = self.data_path + intent.id + "_" + intent_type + "/"
-                self.intent_to_fuzzed_data_folder_path_dict[intent] = path  
+                self.intent_to_fuzzed_data_folder_path_dict[intent] = path
             except:
                 logger.info("Unsupported mimeType!")
                 pass
+
 
 
     def execute(self):
@@ -127,7 +128,7 @@ class BroadcastFuzzer(object):
                 file_ext = data_path.split("_")[-1]
                 file_ext = file_ext[:-1]
                 file_name = str(i)+"."+file_ext
-                
+
                 # Removing the FuzzData/ from the data_path i.e Getting individual intent folder names  
                 subfolder = data_path.split('/')[-2]
 
@@ -151,14 +152,33 @@ class BroadcastFuzzer(object):
                 if len(errors) == 0:
                     logger.info("No erros found for ", str(mobile_data_path))
                     continue
-                
+
                 # TODO: Create a report, save the logs along with the datafile that caused the crash
                 logger.warn("Crash detected: "+ str(errors))
                 self.generate_crash_report( fuzzed_file_path=data_path+file_name,
                                             error_list=errors,
                                             intent=intent)
-        #TODO: close the target android application  
-    
+        # self.delete_data()
+        #TODO: close the target android application
+
+
+    def delete_data(self):
+        """
+        delete all fuzzed data after using
+        """
+        # get all files
+        files = self.data_path
+        for file in os.listdir(files):
+            file_path = os.path.join(files, file)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+
     def generate_crash_report(self, fuzzed_file_path, error_list, intent):
         """
         Creates a crash report folder with details of the crash
@@ -180,9 +200,9 @@ class BroadcastFuzzer(object):
         except:
             logger.warning("Unable to create reports folder")
             pass
-        
+
         try:
-        # Add a log file to the new folder with: 
+        # Add a log file to the new folder with:
         # 1. Intent Details, 2. Errors
             new_log_file = current_report_path + "/" + timestr + ".log"
             with open(new_log_file, 'w') as file:
