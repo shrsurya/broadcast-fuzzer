@@ -57,7 +57,7 @@ def fuzz_one_txtfile(strlen, data_path, file_name):
     file.close()
 
 
-def fuzz_one_mp4file(file_type, fuzzed_filename, seed_path, data_path):
+def fuzz_one_mp4file(file_type, fuzzed_filename, seed_path, data_path, mode):
     """
     :param intent_id: intent id that will be used to make a new folder store fuzzed data
     :param file_type: what type of fuzzed data to generate
@@ -81,25 +81,32 @@ def fuzz_one_mp4file(file_type, fuzzed_filename, seed_path, data_path):
     seed_hex = str(binascii.hexlify(content))
     seed_hex = seed_hex[2:len(seed_hex) - 1]
 
-    # get all header index
-    all_header_index = []
-    for i in range(len(seed_hex)):
-        for j in range(len(Constants.MP4_IMPORTANT_HEADER)):
-            if seed_hex.startswith(Constants.MP4_IMPORTANT_HEADER[j], i):
-                all_header_index.append(i)
-    # random pick index to fuzz
-    random_header_index = []
-    random_index_size = random_num(len(all_header_index))
-    for i in range(random_index_size):
-        random_header_index.append(all_header_index[random_num(len(all_header_index) - 1)])
-    if len(random_header_index) == 0:
-        random_header_index.append(all_header_index[random_num(len(all_header_index) - 1)])
-    print("hhhh ", random_header_index)
+    if mode == 0:
+        # print("0 mp4 mode ")
+        # get all header index
+        all_header_index = []
+        for i in range(len(seed_hex)):
+            for j in range(len(Constants.MP4_IMPORTANT_HEADER)):
+                if seed_hex.startswith(Constants.MP4_IMPORTANT_HEADER[j], i):
+                    all_header_index.append(i)
+        # random pick index to fuzz
+        random_header_index = []
+        random_index_size = random_num(len(all_header_index))
+        for i in range(random_index_size):
+            random_header_index.append(all_header_index[random_num(len(all_header_index) - 1)])
+        if len(random_header_index) == 0:
+            random_header_index.append(all_header_index[random_num(len(all_header_index) - 1)])
 
-    # fuzz it
-    for i in range(len(random_header_index)):
-        random_header = random_num(len(Constants.MP4_IMPORTANT_HEADER) - 1)
-        seed_hex = seed_hex[:random_header_index[i]] + Constants.MP4_IMPORTANT_HEADER[random_header] + seed_hex[random_header_index[i] + 8:]
+        # fuzz it
+        for i in range(len(random_header_index)):
+            random_header = random_num(len(Constants.MP4_IMPORTANT_HEADER) - 1)
+            seed_hex = seed_hex[:random_header_index[i]] + Constants.MP4_IMPORTANT_HEADER[random_header] + seed_hex[random_header_index[i] + 8:]
+    elif mode == 1:
+        # print("1 mp4 mode ")
+        replace_random_num = random_num(10)
+        for i in range(replace_random_num):
+            random_index = random_num(len(seed_hex))
+            seed_hex = seed_hex[:random_index] + random_onehex() + seed_hex[random_index + 1:]
 
     # write fuzzed data to a new mp4 file
     data = binascii.a2b_hex(seed_hex)
@@ -109,7 +116,7 @@ def fuzz_one_mp4file(file_type, fuzzed_filename, seed_path, data_path):
     file.close()
 
 
-def fuzz_one_pngfile(file_type, fuzzed_filename, fuzz_index_arr, seed_path, data_path):
+def fuzz_one_pngfile(file_type, fuzzed_filename, fuzz_index_arr, seed_path, data_path, mode):
     """
     :param intent_id: intent id that will be used to make a new folder store fuzzed data
     :param file_type: what type of fuzzed data to generate
@@ -133,11 +140,20 @@ def fuzz_one_pngfile(file_type, fuzzed_filename, fuzz_index_arr, seed_path, data
     seed_hex = str(binascii.hexlify(content))
     seed_hex = seed_hex[2:len(seed_hex)-1]
 
-    # fuzz it
-    for i in range(len(fuzz_index_arr)):
-        chunk_start = fuzz_index_arr[i][0]
-        chunk_end = fuzz_index_arr[i][1]
-        seed_hex = random_multihex(seed_hex, chunk_start, chunk_end)
+    # pick a mode
+    if mode == 0:
+        # print("0 mode")
+        # fuzz it
+        for i in range(len(fuzz_index_arr)):
+            chunk_start = fuzz_index_arr[i][0]
+            chunk_end = fuzz_index_arr[i][1]
+            seed_hex = random_multihex(seed_hex, chunk_start, chunk_end)
+    elif mode == 1:
+        # print("1 mode")
+        replace_random_num = random_num(10)
+        for i in range(replace_random_num):
+            random_index = random_num(len(seed_hex))
+            seed_hex = seed_hex[:random_index] + random_onehex() + seed_hex[random_index + 1:]
 
     # write fuzzed data to a new png file
     data = binascii.a2b_hex(seed_hex)
@@ -179,7 +195,8 @@ def fuzz(intent_id, file_type, data_runs, seed_path, data_path):
             # new unique filename
             file_name = str(i) + "." + file_type
             # create a new fuzzed file
-            fuzz_one_pngfile(file_type, file_name, fuzz_index_arr, seed_path, data_path)
+            mode = random.randint(0, 1)
+            fuzz_one_pngfile(file_type, file_name, fuzz_index_arr, seed_path, data_path, mode)
         if file_type == "txt":
             strlen = random_num(2048)
             file_name = str(i) + "." + file_type
@@ -188,6 +205,7 @@ def fuzz(intent_id, file_type, data_runs, seed_path, data_path):
             # new unique filename
             file_name = str(i) + "." + file_type
             # create a new fuzzed file
-            fuzz_one_mp4file(file_type, file_name, seed_path, data_path)
+            mode = random.randint(0, 1)
+            fuzz_one_mp4file(file_type, file_name, seed_path, data_path, mode)
 # if __name__ == '__main__':
 #     fuzz("png", 10, "../../SEED/", "../../FuzzedData/")
