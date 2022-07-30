@@ -84,15 +84,20 @@ class BroadcastFuzzer(object):
             # if mimetype is in the global dic, fuzz, else skip
             try:
                 intent_type = Constants.MIMETYPE_FILETYPE_DICT[intent.data_mimetype]
+                flag = False
                 if intent_type == "png":
                     fuzz(intent.id, intent_type, self.data_runs, self.seed_path, self.data_path)
+                    flag = True
                 elif intent_type == "txt":
                     fuzz(intent.id, intent_type, self.data_runs, self.seed_path, self.data_path)
+                    flag = True
                 elif intent_type == "mp4":
                     fuzz(intent.id, intent_type, self.data_runs, self.seed_path, self.data_path)
+                    flag = True
                 # add a path for each intent with fuzzed data
-                path = self.data_path + intent.id + "_" + intent_type + "/"
-                self.intent_to_fuzzed_data_folder_path_dict[intent] = path
+                if flag:
+                    path = self.data_path + intent.id + "_" + intent_type + "/"
+                    self.intent_to_fuzzed_data_folder_path_dict[intent] = path
             except:
                 logger.info("Unsupported mimeType!")
                 pass
