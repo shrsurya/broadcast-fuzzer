@@ -1,5 +1,5 @@
 class Constants(object):
-    ERROR_PHRASES = ["SIGSEGV","NullPointer","Runtime","Exception","Error"]
+    ERROR_PHRASES = ["SIGSEGV","NullPointer","Runtime","Exception","Error"," E/"]
     textType = "text/*"
     pngType = "image/*"
     mp4Type = "video/*"

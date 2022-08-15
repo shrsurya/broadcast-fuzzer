@@ -8,10 +8,10 @@ class ErrorListener(object):
 
     # Timeout in ms
 
-    def __init__(self,package_name,timeout):
+    def __init__(self,package_name,timeout,adb_path):
         self.timeout = timeout
         self.package= package_name
-        adb_path = os.environ.get('ADB_PATH')
+        # adb_path = os.environ.get('ADB_PATH')
         if adb_path == '':
             raise Exception('Cannot find path to adb tools!')
         self.adbUtil = adbUtil(adb_path)

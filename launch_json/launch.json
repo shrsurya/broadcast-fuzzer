@@ -1,0 +1,38 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "buzz print",
+            "type": "python",
+            "request": "launch",
+            "program": "/Users/shri/Desktop/UW courses/ECE653/broadcast-fuzzer/SOURCES/buzz",
+            "python": "/Users/shri/Desktop/UW courses/ECE653/broadcast-fuzzer/env/bin/python3",
+            "env": {"ADB_PATH":"/Users/shri/Desktop/platform-tools/adb"},
+            "args": ["-m", "xmls/telegram_manifest.xml", "-p"],
+            "justMyCode": true
+        },
+        {
+            "name": "buzz generate",
+            "type": "python",
+            "request": "launch",
+            "program": "/Users/shri/Desktop/UW courses/ECE653/broadcast-fuzzer/SOURCES/buzz",
+            "python": "/Users/shri/Desktop/UW courses/ECE653/broadcast-fuzzer/env/bin/python3",
+            "env": {"ADB_PATH":"/Users/shri/Desktop/platform-tools/adb"},
+            "args": ["-m", "xmls/telegram_manifest.xml", "-g", "-dr", "25"],
+            "justMyCode": true
+        },
+        {
+            "name": "buzz generate and exec",
+            "type": "python",
+            "request": "launch",
+            "program": "/Users/shri/Desktop/UW courses/ECE653/broadcast-fuzzer/SOURCES/buzz",
+            "python": "/Users/shri/Desktop/UW courses/ECE653/broadcast-fuzzer/env/bin/python3",
+            "env": {"ADB_PATH":"/Users/shri/Desktop/platform-tools/adb"},
+            "args": ["-m", "xmls/telegram_manifest.xml", "-g", "-dr", "3", "-e"],
+            "justMyCode": true
+        }
+    ]
+}

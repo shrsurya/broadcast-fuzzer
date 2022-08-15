@@ -9,7 +9,8 @@ from data_generator import fuzz
 from constants import Constants
 from adb_util import adbUtil
 from error_listener import ErrorListener
-
+# TODO: Check if package exists on target device
+# TODO: Verify if error filter is working properly
 
 class BroadcastFuzzer(object):
     """
@@ -56,8 +57,9 @@ class BroadcastFuzzer(object):
             self.adb_path = kwargs["adb_path"]
         else:
             self.adb_path = os.environ.get("ADB_PATH")
-            if self.adb_path == "":
-                raise Exception("Cannot find path to adb tools!")
+            
+        if self.adb_path == "":
+            raise Exception("Cannot find path to adb tools!")
 
         self.adb = adbUtil(self.adb_path)
 
@@ -103,11 +105,20 @@ class BroadcastFuzzer(object):
                 pass
 
 
-
+    # Intent Generator
     def execute(self):
         """
         Executes the fuzzing of every intent in the manifest
         """
+        # Delete folder and create new one at /storage/self/primary/buzzData
+        ret_code = self.adb.rmdir(Constants.DEVICE_FUZZ_DATA_DIR)
+        logger.debug('Folder deletion status := '+str(ret_code))
+        # Create new folder in given path in /storage/self/primary/buzzData
+        ret_code = self.adb.mkdir(Constants.DEVICE_FUZZ_DATA_DIR)
+        if ret_code !=0:
+            logger.debug(ret_code)
+            logger.error("Failed to create fuzzed data directory on android")
+    
         for intent, data_path in self.intent_to_fuzzed_data_folder_path_dict.items():
             # print(intent_id, " : ", data_path)
             # Try to copy fuzzed data to the android device
@@ -151,7 +162,7 @@ class BroadcastFuzzer(object):
                     logger.warn(str(intent.id)+" wasn't fired successfully for "+mobile_data_path)
                     continue
                 # instantiate listener
-                listener = ErrorListener(package_name=self.package_name, timeout=13)
+                listener = ErrorListener(package_name=self.package_name, timeout=13, adb_path=self.adb_path)
                 errors = listener.listen()
                 # if no errors, we move one
                 if len(errors) == 0:
@@ -163,9 +174,7 @@ class BroadcastFuzzer(object):
                 self.generate_crash_report( fuzzed_file_path=data_path+file_name,
                                             error_list=errors,
                                             intent=intent)
-        # self.delete_data()
-        #TODO: close the target android application
-
+            # self.adb.close_app(pkg_name=self.package_name)
 
     def delete_data(self):
         """

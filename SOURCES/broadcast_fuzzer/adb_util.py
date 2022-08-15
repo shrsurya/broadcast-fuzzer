@@ -5,7 +5,6 @@ import logger
 log = logger.get_logger(__name__)
 from constants import Constants
 
-# TODO: Write utility function to create folders in android 
 '''This class will contain utility functions that will use the adb cmd tool'''
 class adbUtil(object):
 
@@ -25,8 +24,16 @@ class adbUtil(object):
         ret = subprocess.call([self.adb_path,"shell","am","force-stop",pkg_name])
         return ret
 
+    def rmdir(self,path):
+        log.debug('Deleting directory from path =' + path)
+        return subprocess.call([self.adb_path,"shell","rm","-r",path])
+
+    def mkdir(self,path):
+        log.debug('Creating new directory folder on phone memory at path = '+path)
+        return subprocess.call([self.adb_path,"shell","mkdir",path])
+
+
     def copy_to_android(self,src,dest):
-        # TODO: Check if this dest folder exist 
         """
         Copies data from give src dir to dest dir in android device
         args:
