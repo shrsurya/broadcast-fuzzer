@@ -8,9 +8,10 @@
             "name": "buzz print",
             "type": "python",
             "request": "launch",
-            "program": "/Users/shri/Desktop/UW courses/ECE653/broadcast-fuzzer/SOURCES/buzz",
-            "python": "/Users/shri/Desktop/UW courses/ECE653/broadcast-fuzzer/env/bin/python3",
-            "env": {"ADB_PATH":"/Users/shri/Desktop/platform-tools/adb"},
+            // remember to use full paths in the next 3 lines
+            "program": "broadcast-fuzzer/SOURCES/buzz",
+            "python": "broadcast-fuzzer/env/bin/python3",
+            "env": {"ADB_PATH":"platform-tools/adb"},
             "args": ["-m", "xmls/telegram_manifest.xml", "-p"],
             "justMyCode": true
         },
@@ -18,9 +19,10 @@
             "name": "buzz generate",
             "type": "python",
             "request": "launch",
-            "program": "/Users/shri/Desktop/UW courses/ECE653/broadcast-fuzzer/SOURCES/buzz",
-            "python": "/Users/shri/Desktop/UW courses/ECE653/broadcast-fuzzer/env/bin/python3",
-            "env": {"ADB_PATH":"/Users/shri/Desktop/platform-tools/adb"},
+            // remember to use full paths in the next 3 lines
+            "program": "broadcast-fuzzer/SOURCES/buzz",
+            "python": "broadcast-fuzzer/env/bin/python3",
+            "env": {"ADB_PATH":"platform-tools/adb"},
             "args": ["-m", "xmls/telegram_manifest.xml", "-g", "-dr", "25"],
             "justMyCode": true
         },
@@ -28,9 +30,10 @@
             "name": "buzz generate and exec",
             "type": "python",
             "request": "launch",
-            "program": "/Users/shri/Desktop/UW courses/ECE653/broadcast-fuzzer/SOURCES/buzz",
-            "python": "/Users/shri/Desktop/UW courses/ECE653/broadcast-fuzzer/env/bin/python3",
-            "env": {"ADB_PATH":"/Users/shri/Desktop/platform-tools/adb"},
+            // remember to use full paths in the next 3 lines
+            "program": "broadcast-fuzzer/SOURCES/buzz",
+            "python": "broadcast-fuzzer/env/bin/python3",
+            "env": {"ADB_PATH":"platform-tools/adb"},
             "args": ["-m", "xmls/telegram_manifest.xml", "-g", "-dr", "3", "-e"],
             "justMyCode": true
         }
